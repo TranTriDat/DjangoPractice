@@ -19,13 +19,10 @@ DB_USER_SIGNED_UP_AFTER_A_DAY = "List of users signed up for today"
 
 
 def list_users(date):
-    list_user_today = []
     all_users = User.objects.filter(date_joined__year=date.year,
                                     date_joined__month=date.month,
                                     date_joined__day=date.day)
-    for user in all_users.iterator():
-        print(user)
-        list_user_today.append(user.username)
+    list_user_today = [user.username for user in all_users.iterator()]
 
     return list_user_today
 
