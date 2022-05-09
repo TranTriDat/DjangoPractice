@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} Show Product {% endblock %}
+{% block content %}
+<center>
+    <h1>
+        Product:
+    </h1>
+    {{ product }}<br/>
+        Category:
+        {{ category|join:', ' }}
+
+    <br/>
+    {% if image_list %}
+        {% for i in image_list %}
+                <img src="{{ i.image.url }}" width="500">
+        {% endfor %}
+    {% endif %}
+</center>
+{% endblock%}

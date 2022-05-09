@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} Sign In {% endblock %}
+{% block content %}
+<h3>Sign In</h3>
+<form action="/sigin" method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="username" class="form-label">User Name</label>
+        <input type="text" class="form-control" id="username" name="username">
+    </div>
+
+    <div class="mb-3">
+        <label for="pass1" class="form-label">Password</label>
+        <input type="password" class="form-control" id="pass1" name="pass1">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Sign In</button>
+    <br>
+    <p><strong>-- OR --</strong></p>
+    <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
+    <br>
+    <a href="{% url 'social:begin' 'linkedin-oauth2' %}">Login with LinkedIn</a>
+</form>
+<script src="" async defer></script>
+{% endblock%}

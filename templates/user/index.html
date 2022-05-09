@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<h3>
+    Welcome to the login page
+</h3>
+
+{% if user.is_authenticated %}
+<h3>Hello {{ user.username }}</h3>
+<h4>You're successfully loged in</h4>
+
+{% else %}
+<button type="submit"><a href="/sigup">SignUp</a></button>
+<button type="submit"><a href="/sigin">SignIn</a></button>
+{% endif %}
+
+<script src="" async defer></script>
+{% endblock %}
