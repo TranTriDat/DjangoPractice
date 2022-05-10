@@ -8,6 +8,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'category_name', 'image']
         ordering = ['-id']
 
+    def create(self, validated_data):
+        category = Category(**validated_data)
+        category.save()
+        return category
+
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,21 +27,16 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=True)
+    category_details = CategorySerializer(many=True, read_only=True, source="category")
     image = serializers.SerializerMethodField()
 
     def get_image(self, obj):
         image = Image.objects.filter(product=obj)
         return ImageSerializer(image, many=True, read_only=False).data
 
-    def create(self, validated_data):
-        product = Product(**validated_data)
-        product.save()
-        return product
-
     class Meta:
         model = Product
-        fields = ['id', 'product_name', 'category', 'image']
+        fields = ['id', 'product_name', 'category', 'image', 'category_details']
         ordering = ['-id']
 
 

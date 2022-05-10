@@ -29,7 +29,7 @@ class CategoryViewSet(viewsets.ModelViewSet, APIView):
 
 
 class ProductViewSet(viewsets.ModelViewSet, APIView):
-    queryset = Product.objects.all().order_by('category', 'product_name')
+    queryset = Product.objects.all().prefetch_related('category')
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
 
