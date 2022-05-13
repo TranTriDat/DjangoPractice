@@ -14,6 +14,29 @@ class CategorySerializer(serializers.ModelSerializer):
         return category
 
 
+class CategoryListSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        categories = [Category(**item) for item in validated_data]
+        return Category.objects.bulk_create(categories)
+
+    def update(self, instance, validated_data):
+        category_mapping = {category.id: category for category in instance}
+        data_mapping = {item['id']: item for item in validated_data}
+
+        ret = []
+        for category_id, data in data_mapping.items():
+            category = category_mapping.get(category_id, None)
+            if category is None:
+                ret.append(self.child.create(data))
+            else:
+                ret.append(self.child.update(category, data))
+
+        for category_id, category in category_mapping.items():
+            if category_id not in category_mapping:
+                category.delete()
+        return ret
+
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
@@ -28,16 +51,13 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_details = CategorySerializer(many=True, read_only=True, source="category")
-    image = serializers.SerializerMethodField()
-
-    def get_image(self, obj):
-        image = Image.objects.filter(product=obj)
-        return ImageSerializer(image, many=True, read_only=False).data
+    image_set = ImageSerializer(many=True, read_only=True, source="image")
 
     class Meta:
         model = Product
-        fields = ['id', 'product_name', 'category', 'image', 'category_details']
+        fields = ['id', 'product_name', 'category', 'category_details', "image_set"]
         ordering = ['-id']
+        list_serializer_class = CategoryListSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
