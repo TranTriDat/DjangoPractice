@@ -29,7 +29,7 @@ class CategoryViewSet(viewsets.ModelViewSet, APIView):
 
 
 class ProductViewSet(viewsets.ModelViewSet, APIView):
-    queryset = Product.objects.all().order_by('category', 'product_name')
+    queryset = Product.objects.all().order_by('category', 'product_name').prefetch_related('image', 'category')
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -49,20 +49,11 @@ class ProductViewSet(viewsets.ModelViewSet, APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProductView(generics.ListAPIView):
-    queryset = Product.objects.all().prefetch_related('category')
-    serializer_class = ProductSerializer
-
-
 class ImageViewSet(generics.ListCreateAPIView):
-    queryset = Image.objects.all().order_by('product')
+    queryset = Image.objects.all().order_by('product').select_related('product')
     serializer_class = ImageSerializer
     parser_classes = (MultiPartParser, FormParser)
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         product_id = request.data['product']
