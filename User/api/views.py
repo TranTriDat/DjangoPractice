@@ -26,7 +26,6 @@ class Home(generics.GenericAPIView):
 class SignUp(generics.GenericAPIView):
     serializer_class = RegisterUserSerializer
 
-    @transaction.atomic()
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
